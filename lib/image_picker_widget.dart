@@ -17,10 +17,13 @@ part 'functions/crop_image.dart';
 part 'functions/change_image.dart';
 
 class ImagePickerWidget extends StatefulWidget {
-  /// The diameter of the container in which the image is contained
-  final double diameter;
+  /// The width of the container (replaces diameter)
+  final double width;
+  
+  /// The height of the container (optional for custom shape)
+  final double? height;
 
-  /// The shape of the widget [square or circle]
+  /// The shape of the widget [square, circle or custom]
   final ImagePickerWidgetShape shape;
 
   /// How the image should be inscribed into the box.
@@ -57,12 +60,10 @@ class ImagePickerWidget extends StatefulWidget {
   /// Image editing params
   final CroppedImageOptions? croppedImageOptions;
 
-  final double? customWidth;
-  final double? customHeight;
-
   const ImagePickerWidget(
       {Key? key,
-      required this.diameter,
+      required this.width,
+      this.height,
       this.initialImage,
       this.isEditable = false,
       this.shouldCrop = false,
@@ -74,11 +75,9 @@ class ImagePickerWidget extends StatefulWidget {
       this.editIcon,
       this.fit,
       this.imagePickerModal,
-      this.modalOptions, 
+      this.modalOptions,
       this.croppedImageOptions,
-      this.imagePickerOptions,
-      this.customWidth,
-      this.customHeight
+      this.imagePickerOptions
     }) : assert(
             (initialImage is String ||
                 initialImage is File ||
@@ -106,12 +105,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   Widget build(BuildContext context) {
     return _editMode(
         child: Container(
-      width: widget.shape == ImagePickerWidgetShape.custom 
-          ? widget.customWidth ?? widget.diameter 
-          : widget.diameter,
+      width: widget.width,
       height: widget.shape == ImagePickerWidgetShape.custom 
-          ? widget.customHeight ?? widget.diameter 
-          : widget.diameter,
+          ? widget.height ?? widget.width 
+          : widget.width,
       decoration: BoxDecoration(
           color: widget.backgroundColor ?? Colors.grey[500],
           borderRadius: BorderRadius.all(
@@ -153,8 +150,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
             });
           },
           child: Container(
-            width: widget.diameter,
-            height: widget.diameter,
+            width: widget.width,
+            height: widget.shape == ImagePickerWidgetShape.custom 
+                ? widget.height ?? widget.width 
+                : widget.width,
             child: Stack(
               children: [
                 child,
