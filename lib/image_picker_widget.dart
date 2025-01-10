@@ -57,6 +57,9 @@ class ImagePickerWidget extends StatefulWidget {
   /// Image editing params
   final CroppedImageOptions? croppedImageOptions;
 
+  final double? customWidth;
+  final double? customHeight;
+
   const ImagePickerWidget(
       {Key? key,
       required this.diameter,
@@ -73,7 +76,9 @@ class ImagePickerWidget extends StatefulWidget {
       this.imagePickerModal,
       this.modalOptions, 
       this.croppedImageOptions,
-      this.imagePickerOptions
+      this.imagePickerOptions,
+      this.customWidth,
+      this.customHeight
     }) : assert(
             (initialImage is String ||
                 initialImage is File ||
@@ -101,8 +106,12 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   Widget build(BuildContext context) {
     return _editMode(
         child: Container(
-      width: widget.diameter,
-      height: widget.diameter,
+      width: widget.shape == ImagePickerWidgetShape.custom 
+          ? widget.customWidth ?? widget.diameter 
+          : widget.diameter,
+      height: widget.shape == ImagePickerWidgetShape.custom 
+          ? widget.customHeight ?? widget.diameter 
+          : widget.diameter,
       decoration: BoxDecoration(
           color: widget.backgroundColor ?? Colors.grey[500],
           borderRadius: BorderRadius.all(
